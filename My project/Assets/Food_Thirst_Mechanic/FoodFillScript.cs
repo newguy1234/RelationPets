@@ -3,9 +3,9 @@ using UnityEngine;
 public class FoodBarFill : MonoBehaviour
 {
     [Range(0f, 1f)]
-    public float foodPercent = 1f; // from 0 (empty) to 1 (full)
+    public float foodPercent = 1f; // Fill percent
 
-    public Transform fillObject; // Assign the brown fill bar
+    public Transform fillObject; // The brown bar sprite (child of this object)
     private Vector3 initialScale;
     private Vector3 initialPosition;
 
@@ -13,32 +13,28 @@ public class FoodBarFill : MonoBehaviour
     {
         if (fillObject == null)
         {
-            Debug.LogError("Fill object not assigned.");
+            Debug.LogError("Fill object not assigned!");
             return;
         }
 
         initialScale = fillObject.localScale;
         initialPosition = fillObject.localPosition;
-    }
-
-    void Update()
-    {
-        SetFill(foodPercent);
+        SetFill(foodPercent); // Ensure it sets initially
     }
 
     public void SetFill(float percent)
     {
-        percent = Mathf.Clamp01(percent);
+        foodPercent = Mathf.Clamp01(percent);
 
-        // Scale the fill on X
-        Vector3 scale = initialScale;
-        scale.x = percent;
-        fillObject.localScale = scale;
+        Vector3 newScale = initialScale;
+        newScale.x = foodPercent;
+        fillObject.localScale = newScale;
 
-        // Adjust position so left edge stays fixed
-        float offsetX = (1 - percent) * 0.5f * initialScale.x;
-        Vector3 pos = initialPosition;
-        pos.x = initialPosition.x - offsetX;
-        fillObject.localPosition = pos;
+        // If pivot isn't left, offset position to keep bar filling from left
+        float fillWidth = initialScale.x; // 1.0 if originally full
+        float offset = (1 - foodPercent) * fillWidth * 0.5f;
+        Vector3 newPosition = initialPosition;
+        newPosition.x = initialPosition.x - offset;
+        fillObject.localPosition = newPosition;
     }
 }
