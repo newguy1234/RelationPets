@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 
 public class Pipemanager : MonoBehaviour
@@ -14,6 +15,7 @@ public class Pipemanager : MonoBehaviour
 
     [SerializeField] private GameObject ballPrefab;
     [SerializeField] private GameObject ballHolder;
+    [SerializeField] private GameObject victoryText;
 
     [SerializeField] private float ballHolderXStartOffset;
     [SerializeField] private float ballHolderYStartOffset;
@@ -68,6 +70,42 @@ public class Pipemanager : MonoBehaviour
             }
         }
         DrawBalls();
+        checkForVictory();
+    }
+
+    private void checkForVictory()
+    {
+        
+        for(int i = 0; i < 10; i++)
+        {
+            string currentBallColor = "nothing";
+            for (int j = 0; j < 10 ; j++)
+            {
+                // If the holder has an empty tile just skip past it
+                if (mainList[i,j] == "empty")
+                {
+                    continue;
+                }
+                // If its a ball and we are not checking a color yet then select that color
+                else if (mainList[i,j] != "empty" && currentBallColor == "nothing")
+                {
+                    currentBallColor = mainList[i,j];
+                }
+                // if its a ball and we have a color selected if its not the same color its not solved
+                else if (mainList[i,j] != "empty" && currentBallColor != mainList[i, j])
+                {
+                    return;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+        }
+
+        // If we get to the end of the checking without returing we have won
+        print("GOOD JOB");
+        victoryText.SetActive(true);
     }
 
     private void Start()
